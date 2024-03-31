@@ -12,7 +12,15 @@ cd data-loader-graphql
 poetry install
 ```
 
-##
+## Getting Started
+
+Before you can run the project, you need to set up your environment variables.
+
+```sh
+export SQLALCHEMY_DATABASE_URI=sqlite:///data.db
+```
+
+This command creates a new file named .env in the root of the project and adds a line to it that sets the `SQLALCHEMY_DATABASE_URI` environment variable. This variable tells SQLAlchemy where your database is located. In this example, it's set to use a SQLite database named data.db in the root of the project. You can replace `sqlite:///data.db` with the URI for your own database.
 
 ## Running the Project
 
