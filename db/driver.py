@@ -1,4 +1,3 @@
-from asyncio import current_task
 from typing import Callable, TypeVar, overload
 from flask import Flask
 from sqlalchemy import Engine, create_engine, select, Result, Function
@@ -216,14 +215,4 @@ class Database:
             int: The ID of the current context.
         """
         id_ = id(app_ctx._get_current_object())  # type: ignore
-        return id_
-
-    def _get_current_task(self) -> int:
-        """
-        Get the ID of the current task.
-
-        Returns:
-            int: The ID of the current task.
-        """
-        id_ = id(current_task())
         return id_
