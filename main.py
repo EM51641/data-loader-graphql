@@ -1,18 +1,30 @@
+"""
+The main entry point for the application.
+"""
+
 from flask import Flask
-from flask_graphql import GraphQLView
-from schemas import schema
+from db.extension import db
+from schemas.view import view_func
+from dotenv import load_dotenv
+from db.tables import BaseEntity  # noqa
+
+load_dotenv()
 
 
-app=Flask(__name__)
+def create_app() -> Flask:
+    """
+    Create and configure the Flask application.
+
+    Returns:
+        Flask: The configured Flask application.
+    """
+    app = Flask(__name__)
+    db.init(app)
+    BaseEntity.metadata.create_all(bind=db.engine)  # type: ignore
+    app.add_url_rule("/graphql", view_func=view_func)
+    return app
 
 
-app.add_url_rule(
-    "/graphql",
-    view_func=GraphQLView.as_view(
-        "graphql",
-        schema=schema,
-        graphiql=True
-    ),
-)
-
-
+if __name__ == "__main__":
+    app = create_app()
+    app.run(debug=True)

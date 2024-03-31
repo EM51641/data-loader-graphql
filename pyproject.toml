@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "flask-graphql-sqlalchemy-dataloader-example"
+version = "0.1.0"
+description = ""
+authors = ["Elyes Mahjoubi <elyesmahjoubi@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flask = "^2.1.2"
+flask-graphql = "^2.0.1"
+graphene = "^2.1.9"
+sqlalchemy = "^2.0.0"
+python-dotenv = "^1.0.1"
+promise = "^2.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
