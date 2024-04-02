@@ -7,6 +7,7 @@ from db.extension import db
 class PostLoader(DataLoader):
     def batch_load_fn(self, user_ids):
         # Fetch all posts for the given user_ids in a single SQL query
+
         posts = (
             db.session.query(PostEntity).filter(PostEntity.user_id.in_(user_ids)).all()
         )

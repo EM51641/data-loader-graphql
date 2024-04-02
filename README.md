@@ -40,7 +40,7 @@ Here are some example GraphQL queries that you can run on this API.
 
 ```graphql
 mutation {
-  mutateUser(username: "newuser", email: "newuser@example.com") {
+  CreateUser(username: "newuser", email: "newuser@example.com") {
     user {
       id
       username
@@ -54,7 +54,7 @@ mutation {
 
 ```graphql
 mutation {
-  mutatePost(title: "New Post", content: "This is a new post.", user_id: 1) {
+  CreatePost(title: "New Post", content: "This is a new post.", user_id: 1) {
     post {
       id
       title
@@ -64,38 +64,27 @@ mutation {
 }
 ```
 
-### Fetch All Users
+### Fetch five user's posts
 
 ```graphql
 query {
   users {
     id
-    username
     email
-  }
-}
-```
-
-### Fetch a Single User
-
-```graphql
-query {
-  user(id: "1") {
-    id
     username
-    email
-  }
-}
-```
-
-### Fetch All Posts
-
-```graphql
-query {
-  posts {
-    id
-    title
-    content
+    posts(first: 5) {
+      edges {
+        node {
+          id
+          content
+          title
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
   }
 }
 ```

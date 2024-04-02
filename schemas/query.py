@@ -11,7 +11,7 @@ class User(graphene.ObjectType):
     id = graphene.ID(required=True)
     username = graphene.String()
     email = graphene.String()
-    posts = graphene.List(lambda: Post)
+    posts = graphene.relay.ConnectionField(lambda: PostConnection)
 
     class Meta:
         name = "User"
@@ -22,13 +22,19 @@ class User(graphene.ObjectType):
         user = db.session.query(UserEntity).filter(UserEntity.id == id).one()
         return User(id=user.id, email=user.email, username=user.username)
 
-    def resolve_posts(self, info):
+    def resolve_posts(self, info, first=None, last=None, before=None, after=None):
         return info.context["post_loader"].load(self.id)
 
 
 class Post(graphene.ObjectType):
     """
-    Post schema
+    Represents a Post object in the GraphQL API.
+
+    Attributes:
+        id (graphene.ID): The unique identifier of the post.
+        title (graphene.String): The title of the post.
+        content (graphene.String): The content of the post.
+        user (graphene.Field): The user associated with the post.
     """
 
     id = graphene.ID(required=True)
@@ -42,8 +48,33 @@ class Post(graphene.ObjectType):
 
     @staticmethod
     def get_node(info, id: int):
+        """
+        Retrieve a Post object by its ID.
+
+        Args:
+            info (graphene.ResolveInfo): The resolve info object.
+            id (int): The ID of the post to retrieve.
+
+        Returns:
+            Post: The Post object with the specified ID.
+        """
         post = db.session.query(PostEntity).filter(PostEntity.id == id).one()
         return Post(id=post.id, title=post.title, content=post.content)
+
+
+class PostConnection(graphene.relay.Connection):
+    """
+    A connection class for the Post GraphQL type.
+
+    This connection class is used to paginate and retrieve a list of Post objects.
+
+    Attributes:
+        node (graphene.ObjectType): The GraphQL type for the individual nodes in the connection.
+
+    """
+
+    class Meta:  # type: ignore
+        node = Post
 
 
 class Query(graphene.ObjectType):
@@ -53,8 +84,8 @@ class Query(graphene.ObjectType):
 
     node = graphene.relay.Node.Field()
     user = graphene.Field(User, id=graphene.ID(required=True))
+    post = graphene.Field(Post, id=graphene.ID(required=True))
     users = graphene.List(User)
-    posts = graphene.List(Post)
 
     def resolve_user(self, info, id):
         user = db.session.query(UserEntity).filter(UserEntity.id == id).first()

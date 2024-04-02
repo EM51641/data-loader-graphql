@@ -4,12 +4,15 @@ from db.extension import db
 from schemas.query import User as UserType, Post as PostType
 
 
-class UserMutation(graphene.Mutation):
+class CreateUser(graphene.Mutation):
     """
     Represents a GraphQL mutation for creating a new user.
     """
 
     user = graphene.Field(UserType)
+
+    class Meta:
+        name = "CreateUser"
 
     class Arguments:
         username = graphene.String(required=True)
@@ -30,10 +33,10 @@ class UserMutation(graphene.Mutation):
         user = UserEntity(username=username, email=email)
         db.add(user)
         db.commit()
-        return UserMutation(user=user)
+        return CreateUser(user=user)
 
 
-class PostMutation(graphene.Mutation):
+class CreatePost(graphene.Mutation):
     """
     Mutation for creating a new post.
 
@@ -43,11 +46,14 @@ class PostMutation(graphene.Mutation):
         content (str): The content of the post (required).
 
     Returns:
-        PostMutation: The created post mutation.
+        CreatePost: The created post mutation.
 
     """
 
     post = graphene.Field(PostType)
+
+    class Meta:
+        name = "CreatePost"
 
     class Arguments:
         user_id = graphene.ID()
@@ -65,15 +71,15 @@ class PostMutation(graphene.Mutation):
             content (str): The content of the post.
 
         Returns:
-            obj: The newly created PostMutation object.
+            obj: The newly created CreatePost object.
 
         """
         new_post = PostEntity(title=title, content=content, user_id=user_id)
         db.add(new_post)
         db.commit()
-        return PostMutation(post=new_post)
+        return CreatePost(post=new_post)
 
 
 class Mutation(graphene.ObjectType):
-    mutate_user = UserMutation.Field()
-    mutate_post = PostMutation.Field()
+    create_user = CreateUser.Field()
+    create_post = CreatePost.Field()
